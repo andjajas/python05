@@ -4,6 +4,9 @@ from typing import Any
 
 
 class DataProcessor(ABC):
+    def __init__ (self) -> None:
+        self.queue = []
+        self.counter = 0
     @abstractmethod
     def validate(self, data: Any) -> bool:
         pass
@@ -20,7 +23,10 @@ class NumericProcessor(DataProcessor):
     def validate(self, data: Any) -> bool:
         pass
 
-    def ingest(self, num_data: int | float | list[int] | list[float]) -> None:
+    def ingest(
+        self,
+        num_data: int | float | list[int | float]
+         ) -> None:
         if isinstance(num_data, )
 
 
