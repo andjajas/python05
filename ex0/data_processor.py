@@ -5,8 +5,9 @@ from typing import Any
 
 class DataProcessor(ABC):
     def __init__ (self) -> None:
-        self.queue = []
-        self.counter = 0
+        self.queue: list[tuple[int, str]] = []
+        self.counter: int = 0
+
     @abstractmethod
     def validate(self, data: Any) -> bool:
         pass
@@ -14,9 +15,9 @@ class DataProcessor(ABC):
     @abstractmethod
     def ingest(self, data: Any) -> None:
         pass
-    
+
     def output(self) -> tuple[int, str]:
-        pass
+        return self.queue.pop(0)
 
 
 class NumericProcessor(DataProcessor):
@@ -50,3 +51,4 @@ class LogProcessor(DataProcessor):
 # specific signatures to match the types they expect.
 # In case the user does not validate the data before calling ingest,
 # and provides invalid data, an exception must be raised.
+# use assert of isinstance
