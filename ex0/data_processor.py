@@ -69,10 +69,28 @@ class TextProcessor(DataProcessor):
 
 class LogProcessor(DataProcessor):
     def validate(self, data: Any) -> bool:
-        pass
+        if (isinstance(data, dict)
+                and all(isinstance(elem, str) for elem in data.keys())
+                and all(isinstance(elem, str) for elem in data.values())):
+            return True
+        elif isinstance(data, list):
+            return all(self.validate(elem) for elem in data)
+        else:
+            return False
 
-    def ingest(self):
-        pass
+    def ingest(self, data: dict[str, str] | list[dict[str, str]]) -> None:
+        if isinstance(data, list):
+            data_list = data
+        else:
+            data_list = [data]
+        for elem in data_list:
+            if self.validate(elem):
+                elem_str = ": ".join(elem.values())
+                elem_tup = (self.counter, elem_str)
+                self.queue.append(elem_tup)
+                self.counter += 1
+            else:
+                raise TypeError("Got exception: Improper dict data")
 
 
 if __name__ == "__main__":
