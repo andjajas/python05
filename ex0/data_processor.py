@@ -22,13 +22,29 @@ class DataProcessor(ABC):
 
 class NumericProcessor(DataProcessor):
     def validate(self, data: Any) -> bool:
-        pass
+        if isinstance(data, (int, float)):
+            return True
+        elif isinstance(data, list):
+            return all(isinstance(elem, (int, float)) for elem in data)
+        else:
+            return False
 
     def ingest(
         self,
-        num_data: int | float | list[int | float]
+        data: int | float | list[int | float]
          ) -> None:
-        if isinstance(num_data, )
+        if isinstance(data, list):
+            data_list = data
+        else:
+            data_list = [data]
+        for elem in data_list:
+            if self.validate(elem):
+                elem_str = str(elem)
+                elem_tup = (self.counter, elem_str)
+                self.queue.append(elem_tup)
+                self.counter += 1
+            else:
+                raise TypeError("Got exception: Improper numeric data")
 
 
 class TextProcessor(DataProcessor):
