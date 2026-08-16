@@ -4,7 +4,7 @@ from typing import Any
 
 
 class DataProcessor(ABC):
-    def __init__ (self) -> None:
+    def __init__(self) -> None:
         self.queue: list[tuple[int, str]] = []
         self.counter: int = 0
 
@@ -41,7 +41,7 @@ class NumericProcessor(DataProcessor):
                 self.queue.append(elem_tup)
                 self.counter += 1
             else:
-                raise TypeError("Got exception: Improper numeric data")
+                raise TypeError("Improper numeric data")
 
 
 class TextProcessor(DataProcessor):
@@ -64,7 +64,7 @@ class TextProcessor(DataProcessor):
                 self.queue.append(elem_tup)
                 self.counter += 1
             else:
-                raise TypeError("Got exception: Improper text data")
+                raise TypeError("Improper text data")
 
 
 class LogProcessor(DataProcessor):
@@ -90,14 +90,63 @@ class LogProcessor(DataProcessor):
                 self.queue.append(elem_tup)
                 self.counter += 1
             else:
-                raise TypeError("Got exception: Improper dict data")
+                raise TypeError("Improper dict data")
 
 
 if __name__ == "__main__":
+    num_proc = NumericProcessor()
+    txt_proc = TextProcessor()
+    log_proc = LogProcessor()
     print("=== Code Nexus - Data Processor ===")
     print("\nTesting Numeric Processor...")
-# the ingest methods in the specialized classes will have their own
-# specific signatures to match the types they expect.
-# In case the user does not validate the data before calling ingest,
-# and provides invalid data, an exception must be raised.
-# use assert of isinstance
+    print(f" Trying to validate input '42': {num_proc.validate(42)}")
+    print(f" Trying to validate input 'Hello': {num_proc.validate('Hello')}")
+    try:
+        num_proc.ingest("some invalid string")
+    except TypeError as e:
+        print(f" Got exception: {e}")
+    data1: list[int | float] = [1, 2, 3, 4, 5]
+    print(f" Processing data: {data1}")
+    num_proc.ingest(data1)
+    n = 3
+    print(f" Extracting {n} values")
+    for i in range(n):
+        rank, value = num_proc.output()
+        print(f" Numeric value {rank}: {value}")
+
+    print("\nTesting Text Processor...")
+    print(f" Trying to validate input '42': {txt_proc.validate(42)}")
+    print(f" Trying to validate input 'Hello': {txt_proc.validate('Hello')}")
+    try:
+        txt_proc.ingest([11, 33, 55])
+    except TypeError as e:
+        print(f" Got exception: {e}")
+    data2 = ['Hello', 'Nexus', 'World']
+    print(f" Processing data: {data2}")
+    txt_proc.ingest(data2)
+    n = 1
+    print(f" Extracting {n} value...")
+    for i in range(n):
+        rank, value = txt_proc.output()
+        print(f" Text value {rank}: {value}")
+
+    print("\nTesting Log Processor...")
+    print(f" Trying to validate input '42': {log_proc.validate(42)}")
+    print(f" Trying to validate input 'Hello': {log_proc.validate('Hello')}")
+    sample = {'Hello': 'How are you?'}
+    print(f" Trying to validate input {sample}: {log_proc.validate(sample)}")
+    try:
+        log_proc.ingest([11, 33, 55])
+    except TypeError as e:
+        print(f" Got exception: {e}")
+    data3 = [
+        {'log_level': 'NOTICE', 'log_message': 'Connection to server'},
+        {'log_level': 'ERROR', 'log_message': 'Unauthorized access!!'},
+    ]
+    print(f" Processing data: {data3}")
+    log_proc.ingest(data3)
+    n = 2
+    print(f" Extracting {n} values...")
+    for i in range(n):
+        rank, value = log_proc.output()
+        print(f" Log entry {rank}: {value}")
