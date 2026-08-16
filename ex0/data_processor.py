@@ -29,10 +29,7 @@ class NumericProcessor(DataProcessor):
         else:
             return False
 
-    def ingest(
-        self,
-        data: int | float | list[int | float]
-         ) -> None:
+    def ingest(self, data: int | float | list[int | float]) -> None:
         if isinstance(data, list):
             data_list = data
         else:
@@ -49,10 +46,25 @@ class NumericProcessor(DataProcessor):
 
 class TextProcessor(DataProcessor):
     def validate(self, data: Any) -> bool:
-        pass
+        if isinstance(data, str):
+            return True
+        elif isinstance(data, list):
+            return all(isinstance(elem, str) for elem in data)
+        else:
+            return False
 
-    def ingest(self):
-        pass
+    def ingest(self, data: str | list[str]) -> None:
+        if isinstance(data, list):
+            data_list = data
+        else:
+            data_list = [data]
+        for elem in data_list:
+            if self.validate(elem):
+                elem_tup = (self.counter, elem)
+                self.queue.append(elem_tup)
+                self.counter += 1
+            else:
+                raise TypeError("Got exception: Improper text data")
 
 
 class LogProcessor(DataProcessor):
@@ -63,6 +75,9 @@ class LogProcessor(DataProcessor):
         pass
 
 
+if __name__ == "__main__":
+    print("=== Code Nexus - Data Processor ===")
+    print("\nTesting Numeric Processor...")
 # the ingest methods in the specialized classes will have their own
 # specific signatures to match the types they expect.
 # In case the user does not validate the data before calling ingest,
