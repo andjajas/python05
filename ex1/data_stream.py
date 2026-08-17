@@ -93,4 +93,27 @@ class LogProcessor(DataProcessor):
                 raise TypeError("Improper dict data")
 
 
+class DataStream:
+    def __init__(self) -> None:
+        self.processors: list[DataProcessor] = []
+
+    def register_processor(self, proc: DataProcessor) -> None:
+        self.processors.append(proc)
+
+    def process_stream(self, stream: list[Any]) -> None:
+        for elem in stream:
+            for proc in self.processors:
+                if proc.validate(elem):
+                    proc.ingest(elem)
+                else:
+                    print("Error")
+
+    def print_processors_stats(self) -> None:
+        pass
+
+
 if __name__ == "__main__":
+    print("=== Code Nexus - Data Stream ===")
+    stream = DataStream()
+    stream.register_processor(NumericProcessor())
+    stream.register_processor(TextProcessor())
