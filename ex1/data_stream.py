@@ -102,15 +102,25 @@ class DataStream:
 
     def process_stream(self, stream: list[Any]) -> None:
         for elem in stream:
+            any_process = False
             for proc in self.processors:
                 if proc.validate(elem):
                     proc.ingest(elem)
-                else:
-                    print("Error")
+                    any_process = True
+            if not any_process:
+                print(
+                    "DataStream error - Can't process element in"
+                    f" stream: {elem}"
+                )
 
     def print_processors_stats(self) -> None:
-        pass
-
+        print("== DataStream statistics ==")
+        if not self.processors:
+            print("No processor found, no data")
+        else:
+            for proc in self.processors:
+                if proc.counter > 0:
+                    print(f"{type(proc).__name__}")
 
 if __name__ == "__main__":
     print("=== Code Nexus - Data Stream ===")
