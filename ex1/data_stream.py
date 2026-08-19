@@ -113,17 +113,65 @@ class DataStream:
                     f" stream: {elem}"
                 )
 
+    @staticmethod
+    def add_space_before_cap(name: str) -> str:
+        spaced_name = ""
+        for i in range(len(name)):
+            if name[i].isupper() and i != 0:
+                spaced_name += " "
+            spaced_name += name[i]
+        return spaced_name
+
     def print_processors_stats(self) -> None:
         print("== DataStream statistics ==")
         if not self.processors:
             print("No processor found, no data")
         else:
             for proc in self.processors:
-                if proc.counter > 0:
-                    print(f"{type(proc).__name__}")
+                name = type(proc).__name__
+                spaced_name = self.add_space_before_cap(name)
+                print(f"{spaced_name}: total {proc.counter} items "
+                      f"processed, remaining {len(proc.queue)} on processor")
+
 
 if __name__ == "__main__":
     print("=== Code Nexus - Data Stream ===")
     stream = DataStream()
-    stream.register_processor(NumericProcessor())
-    stream.register_processor(TextProcessor())
+    stream.print_processors_stats()
+    num_proc = NumericProcessor()
+    print("\nRegistering Numeric Processor\n")
+    stream.register_processor(num_proc)
+    batch: list[Any] = [
+        'Hello world',
+        [3.14, -1, 2.71],
+        [
+            {
+                'log_level': 'WARNING',
+                'log_message': 'Telnet access! Use ssh instead'
+            },
+            {'log_level': 'INFO', 'log_message': 'User wil isconnected'}
+        ],
+        42,
+        ['Hi', 'five']
+        ]
+    print(f"Send first batch of data on stream: {batch}")
+    stream.process_stream(batch)
+    stream.print_processors_stats()
+    print("\nRegistering other data processors")
+    txt_proc = TextProcessor()
+    stream.register_processor(txt_proc)
+    log_proc = LogProcessor()
+    stream.register_processor(log_proc)
+    print("Send the same batch again")
+    stream.process_stream(batch)
+    stream.print_processors_stats()
+    for i in range(3):
+        num_proc.output()
+    for i in range(2):
+        txt_proc.output()
+    log_proc.output()
+    print(
+        "\nConsume more elements from the data processors: Numeric 3, "
+        "Text 2, Log 1"
+     )
+    stream.print_processors_stats()
