@@ -139,12 +139,22 @@ class DataStream:
                       f"processed, remaining {len(proc.queue)} on processor")
 
     def output_pipeline(self, nb: int, plugin: ExportPlugin) -> None:
-        pass
+        for proc in self.processors:
+            proc_tup: list[tuple[int, str]] = []
+            for i in range(nb):
+                proc_tup.append(proc.output())
+            plugin.process_output(proc_tup)
 
-# So there are actually two separate things you still need to do for ex2:
-# output_pipeline on DataStream — this method's plugin parameter is typed as ExportPlugin,
-# meaning "whatever object gets passed in here must have a process_output(data) method." 
-# output_pipeline will call plugin.process_output(some_data) on whatever it receives.
-# Actual plugin classes (CSV, JSON) — separate, standalone classes (no inheritance from ExportPlugin,
-# as you confirmed earlier) that each implement their own process_output(self,
-# data: list[tuple[int, str]]) -> None, doing the real work of formatting data as CSV or JSON.
+
+class CsvExportPlugin:
+    def process_output(self, data: list[tuple[int, str]]) -> None:
+        values_list: list[str] = [value for rank, value in data]
+        csv_out = ",".join(values_list)
+        print(f"CSV Output:\n{csv_out}")
+
+
+class JsonExportPlugin:
+    def process_output(self, data: list[tuple[int, str]]) -> None:
+        items_list: list[str] = [f'"item_{rank}": "{value}"' for rank, value in data]
+        json_out = ", ".join(items_list)
+        print(f"JSON Output:\n{{{json_out}}}")
