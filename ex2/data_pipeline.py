@@ -157,7 +157,8 @@ class CsvExportPlugin:
 
 class JsonExportPlugin:
     def process_output(self, data: list[tuple[int, str]]) -> None:
-        items_list: list[str] = [f'"item_{rank}": "{value}"' for rank, value in data]
+        items_list: list[str] = [
+            f'"item_{rank}": "{value}"' for rank, value in data]
         json_out = ", ".join(items_list)
         print(f"JSON Output:\n{{{json_out}}}")
 
@@ -204,11 +205,12 @@ if __name__ == "__main__":
         ],
         [
             {
-            'log_level': 'ERROR',
-            'log_message': '500 server crash'
+                'log_level': 'ERROR',
+                'log_message': '500 server crash'
             },
-            {'log_level': 'NOTICE',
-             'log_message': 'Certificate expires in 10 days'
+            {
+                'log_level': 'NOTICE',
+                'log_message': 'Certificate expires in 10 days'
             }
         ],
         [32, 42, 64, 84, 128, 168],
