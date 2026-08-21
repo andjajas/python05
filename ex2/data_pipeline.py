@@ -142,6 +142,8 @@ class DataStream:
         for proc in self.processors:
             proc_tup: list[tuple[int, str]] = []
             for i in range(nb):
+                if not proc.queue:
+                    break
                 proc_tup.append(proc.output())
             plugin.process_output(proc_tup)
 
@@ -187,4 +189,36 @@ if __name__ == "__main__":
         ]
     print(f"Send first batch of data on stream: {batch}\n")
     stream.process_stream(batch)
+    stream.print_processors_stats()
+    print("\nSend 3 processed data from each processor to a CSV plugin:")
+    csv_plug = CsvExportPlugin()
+    stream.output_pipeline(3, csv_plug)
+    print()
+    stream.print_processors_stats()
+    batch2: list[Any] = [
+        21,
+        [
+            'I love AI',
+            'LLMs are wonderful',
+            'Stay healthy'
+        ],
+        [
+            {
+            'log_level': 'ERROR',
+            'log_message': '500 server crash'
+            },
+            {'log_level': 'NOTICE',
+             'log_message': 'Certificate expires in 10 days'
+            }
+        ],
+        [32, 42, 64, 84, 128, 168],
+        'World hello'
+    ]
+    print(f"\nSend another batch of data: {batch2}\n")
+    stream.process_stream(batch2)
+    stream.print_processors_stats()
+    print("\nSend 5 processed data from each processor to a JSON plugin:")
+    json_plug = JsonExportPlugin()
+    stream.output_pipeline(5, json_plug)
+    print()
     stream.print_processors_stats()
