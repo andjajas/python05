@@ -158,3 +158,7 @@ class JsonExportPlugin:
         items_list: list[str] = [f'"item_{rank}": "{value}"' for rank, value in data]
         json_out = ", ".join(items_list)
         print(f"JSON Output:\n{{{json_out}}}")
+
+
+if __name__ == "__main__":
+    print("=== Code Nexus - Data Pipeline ===")

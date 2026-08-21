@@ -135,7 +135,8 @@ class DataStream:
 
 
 if __name__ == "__main__":
-    print("=== Code Nexus - Data Stream ===")
+    print("=== Code Nexus - Data Stream ===\n")
+    print("Initialize Data Steam...")
     stream = DataStream()
     stream.print_processors_stats()
     num_proc = NumericProcessor()
