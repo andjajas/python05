@@ -136,7 +136,7 @@ class DataStream:
 
 if __name__ == "__main__":
     print("=== Code Nexus - Data Stream ===\n")
-    print("Initialize Data Steam...")
+    print("Initialize Data Stream...")
     stream = DataStream()
     stream.print_processors_stats()
     num_proc = NumericProcessor()
@@ -150,7 +150,7 @@ if __name__ == "__main__":
                 'log_level': 'WARNING',
                 'log_message': 'Telnet access! Use ssh instead'
             },
-            {'log_level': 'INFO', 'log_message': 'User wil isconnected'}
+            {'log_level': 'INFO', 'log_message': 'User wil is connected'}
         ],
         42,
         ['Hi', 'five']

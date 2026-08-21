@@ -161,4 +161,30 @@ class JsonExportPlugin:
 
 
 if __name__ == "__main__":
-    print("=== Code Nexus - Data Pipeline ===")
+    print("=== Code Nexus - Data Pipeline ===\n")
+    print("Initialize Data Stream...\n")
+    stream = DataStream()
+    stream.print_processors_stats()
+    num_proc = NumericProcessor()
+    txt_proc = TextProcessor()
+    log_proc = LogProcessor()
+    print("\nRegistering Processors\n")
+    stream.register_processor(num_proc)
+    stream.register_processor(txt_proc)
+    stream.register_processor(log_proc)
+    batch: list[Any] = [
+        'Hello world',
+        [3.14, -1, 2.71],
+        [
+            {
+                'log_level': 'WARNING',
+                'log_message': 'Telnet access! Use ssh instead'
+            },
+            {'log_level': 'INFO', 'log_message': 'User wil is connected'}
+        ],
+        42,
+        ['Hi', 'five']
+        ]
+    print(f"Send first batch of data on stream: {batch}\n")
+    stream.process_stream(batch)
+    stream.print_processors_stats()
